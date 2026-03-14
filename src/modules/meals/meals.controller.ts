@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { createMeal, getMealsByUser, getMealsByDay, deleteMeal } from "./meals.service";
+import { createMeal, getMealsByUser, getMealsByDay, deleteMeal, getMealsByUserAndDate } from "./meals.service";
 
 export const createMealController = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -44,6 +44,20 @@ export const createMealController = async (req: Request, res: Response, next: Ne
   } catch (error) {
     next(error);
   }
+};
+
+export const getMealsByUserAndDateController = async (req: Request, res: Response, next: NextFunction) => {
+   try {
+      const userId = Number(req.params.userId);
+      const { date } = req.query;
+
+      if (isNaN(userId)) return res.status(400).json({ message: "userId debe ser un número" });
+      if (!date || typeof date !== "string") return res.status(400).json({ message: "El parámetro 'date' es requerido (YYYY-MM-DD)" });
+
+      res.json(await getMealsByUserAndDate(userId, date));
+   } catch (error) {
+      next(error);
+   }
 };
 
 export const getMealsByUserController = async (req: Request, res: Response, next: NextFunction) => {

@@ -46,8 +46,8 @@ export const createMeal = async (data: {
       alimentoId = insertFood.rows[0].id_alimento;
    }
 
-  const result = await pool.query(
-    `INSERT INTO registro_comida
+   const result = await pool.query(
+      `INSERT INTO registro_comida
        (id_usuario, fecha, hora_registro, id_tipo_comida, fuera_dieta, completado, id_dia)
      VALUES ($1, $2, $3, $4, $5, $6, $7)
      RETURNING
@@ -59,18 +59,18 @@ export const createMeal = async (data: {
        fuera_dieta AS "outsideDiet",
        completado AS completed,
        id_dia AS "dayId"`,
-    [
-      data.userId,
-      data.date,
-      data.time,
-      data.mealType,
-      data.outsideDiet,
-      data.completed ?? false,
-      data.dayId ?? null,
-    ]
-  );
+      [
+         data.userId,
+         data.date,
+         data.time,
+         data.mealType,
+         data.outsideDiet,
+         data.completed ?? false,
+         data.dayId ?? null,
+      ]
+   );
 
-  const meal = result.rows[0];
+   const meal = result.rows[0];
 
    if (data.foodId && data.quantity) {
       await pool.query(
@@ -83,7 +83,7 @@ export const createMeal = async (data: {
       meal.quantity = data.quantity;
    }
 
-  return meal;
+   return meal;
 };
 
 export const getMealsByUser = async (userId: number): Promise<Meal[]> => {
@@ -114,9 +114,38 @@ export const getMealsByUser = async (userId: number): Promise<Meal[]> => {
    return result.rows;
 };
 
+export const getMealsByUserAndDate = async (userId: number, date: string): Promise<Meal[]> => {
+   const result = await pool.query(
+      `SELECT
+       rc.id_registro AS id,
+       rc.id_usuario AS "userId",
+       rc.id_tipo_comida AS "mealType",
+       rc.fecha AS date,
+       rc.hora_registro AS time,
+       rc.fuera_dieta AS "outsideDiet",
+       rc.completado AS completed,
+       rc.id_dia AS "dayId",
+       ra.id_alimento AS "foodId",
+       a.nombre AS "foodName",
+       a.calorias AS "calories",
+       a.proteinas AS "protein",
+       a.carbohidratos AS "carbs",
+       a.grasas AS "fat",
+       ra.cantidad AS quantity
+     FROM registro_comida rc
+     LEFT JOIN registro_alimento ra ON ra.id_registro = rc.id_registro
+     LEFT JOIN alimento a ON a.id_alimento = ra.id_alimento
+     WHERE rc.id_usuario = $1
+       AND rc.fecha = $2
+     ORDER BY rc.hora_registro DESC`,
+      [userId, date]
+   );
+   return result.rows;
+};
+
 export const getMealsByDay = async (dayId: number): Promise<Meal[]> => {
-  const result = await pool.query(
-    `SELECT
+   const result = await pool.query(
+      `SELECT
        rc.id_registro AS id,
        rc.id_usuario AS "userId",
        rc.id_tipo_comida AS "mealType",
@@ -130,15 +159,15 @@ export const getMealsByDay = async (dayId: number): Promise<Meal[]> => {
      FROM registro_comida rc
      LEFT JOIN registro_alimento ra ON ra.id_registro = rc.id_registro
      WHERE rc.id_dia = $1`,
-    [dayId]
-  );
-  return result.rows;
+      [dayId]
+   );
+   return result.rows;
 };
 
 export const deleteMeal = async (id: number): Promise<boolean> => {
-  const result = await pool.query(
-    `DELETE FROM registro_comida WHERE id_registro = $1 RETURNING id_registro`,
-    [id]
-  );
-  return result.rows.length > 0;
+   const result = await pool.query(
+      `DELETE FROM registro_comida WHERE id_registro = $1 RETURNING id_registro`,
+      [id]
+   );
+   return result.rows.length > 0;
 };
