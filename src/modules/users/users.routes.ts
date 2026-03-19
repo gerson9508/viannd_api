@@ -11,9 +11,9 @@ import { createUserSchema } from "../../validators/user.validator";
 
 const router = Router();
 
-router.post("/", validate(createUserSchema), createUserController);
+/*router.post("/", validate(createUserSchema), createUserController);*/
 router.get("/:id", authMiddleware, getUserController);
 router.patch("/:id", authMiddleware, updateUserController);
-router.delete("/:id", authMiddleware, deleteUserController);
+//router.delete("/:id", authMiddleware, deleteUserController);
 
 export default router;

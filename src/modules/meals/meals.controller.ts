@@ -2,49 +2,86 @@ import { Request, Response, NextFunction } from "express";
 import { createMeal, getMealsByUser, getMealsByDay, deleteMeal, getMealsByUserAndDate } from "./meals.service";
 
 export const createMealController = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-     const {
-        userId,
-        foodId,
-        name,
-        calories,
-        protein,
-        fat,
-        carbs,
-        quantity,
-        mealType,
-        date,
-        time,
-        outsideDiet,
-        completed,
-        dayId
-     } = req.body;
+   try {
+      const {
+         userId,
+         foodId,
+         name,
+         calories,
+         protein,
+         fat,
+         carbs,
+         quantity,
+         mealType,
+         date,
+         time,
+         outsideDiet,
+         completed,
+         dayId
+      } = req.body;
 
-    if (!userId || !mealType || !date || !time) {
-      return res.status(400).json({ message: "Faltan campos requeridos: userId, mealType, date, time" });
-    }
-     const meal = await createMeal({
-        userId,
-        foodId,
-        name,
-        calories,
-        protein,
-        fat,
-        carbs,
-        quantity,
-        mealType,
-        date,
-        time,
-        outsideDiet,
-        completed,
-        dayId
-     });
+      // Todos requeridos siempre
+      if (!userId || !foodId || !name || !mealType || !date || !time || outsideDiet === undefined) {
+         return res.status(400).json({
+            message: "Faltan campos requeridos: userId, foodId, name, mealType, date, time, outsideDiet"
+         });
+      }
 
-    res.status(201).json(meal);
-  } catch (error) {
-    next(error);
-  }
+      if (isNaN(Number(userId))) {
+         return res.status(400).json({ message: "userId debe ser un número" });
+      }
+
+      if (isNaN(Number(foodId))) {
+         return res.status(400).json({ message: "foodId debe ser un número" });
+      }
+
+      if (calories === undefined || isNaN(Number(calories))) {
+         return res.status(400).json({ message: "calories es requerido y debe ser número" });
+      }
+
+      if (protein === undefined || isNaN(Number(protein))) {
+         return res.status(400).json({ message: "protein es requerido y debe ser número" });
+      }
+
+      if (fat === undefined || isNaN(Number(fat))) {
+         return res.status(400).json({ message: "fat es requerido y debe ser número" });
+      }
+
+      if (carbs === undefined || isNaN(Number(carbs))) {
+         return res.status(400).json({ message: "carbs es requerido y debe ser número" });
+      }
+
+      if (!quantity || isNaN(Number(quantity)) || Number(quantity) <= 0) {
+         return res.status(400).json({ message: "quantity es requerido y debe ser mayor a 0" });
+      }
+
+      if (typeof outsideDiet !== "boolean") {
+         return res.status(400).json({ message: "outsideDiet debe ser boolean" });
+      }
+
+      const meal = await createMeal({
+         userId,
+         foodId,
+         name,
+         calories,
+         protein,
+         fat,
+         carbs,
+         quantity,
+         mealType,
+         date,
+         time,
+         outsideDiet,
+         completed,
+         dayId
+      });
+
+      res.status(201).json(meal);
+   } catch (error) {
+      next(error);
+   }
 };
+
 
 export const getMealsByUserAndDateController = async (req: Request, res: Response, next: NextFunction) => {
    try {

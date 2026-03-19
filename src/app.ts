@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
 });
 app.use("/auth", authRoutes);
 app.use("/foods", foodsRoutes);
-app.use("/days", daysRoutes);
+/*app.use("/days", daysRoutes);*/
 app.use("/meals", mealsRoutes);
 app.use("/reminders", remindersRoutes);
 app.use("/reports", reportsRoutes);

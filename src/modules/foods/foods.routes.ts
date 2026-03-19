@@ -5,12 +5,13 @@ import {
    getCategoryController,
    getCategoriesListController
 } from "./foods.controller";
+import { authMiddleware } from "../../middlewares/auth.middleware";
 
 const router = Router();
 
-router.get("/search", searchFoodController);
-router.get("/category/list", getCategoriesListController);
-router.get("/category/:category", getCategoryController); // debe ir antes de /:id
-router.get("/:id", getFoodController);
+router.get("/search", authMiddleware, searchFoodController);
+router.get("/category/list", authMiddleware, getCategoriesListController);
+router.get("/category/:category", authMiddleware, getCategoryController);
+router.get("/:id", authMiddleware, getFoodController);
 
 export default router;
