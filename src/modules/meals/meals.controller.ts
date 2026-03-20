@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { createMeal, getMealsByUser, getMealsByDay, deleteMeal, getMealsByUserAndDate } from "./meals.service";
-
+import { getAuthUser } from "../../middlewares/auth.middleware";
 export const createMealController = async (req: Request, res: Response, next: NextFunction) => {
    try {
       const {
-         userId,
          foodId,
          name,
          calories,
@@ -20,15 +19,13 @@ export const createMealController = async (req: Request, res: Response, next: Ne
          dayId
       } = req.body;
 
+      const { userId } = getAuthUser(req);
+
       // Todos requeridos siempre
-      if (!userId || !foodId || !name || !mealType || !date || !time || outsideDiet === undefined) {
+      if (!foodId || !name || !mealType || !date || !time || outsideDiet === undefined) {
          return res.status(400).json({
             message: "Faltan campos requeridos: userId, foodId, name, mealType, date, time, outsideDiet"
          });
-      }
-
-      if (isNaN(Number(userId))) {
-         return res.status(400).json({ message: "userId debe ser un número" });
       }
 
       if (isNaN(Number(foodId))) {
@@ -85,7 +82,7 @@ export const createMealController = async (req: Request, res: Response, next: Ne
 
 export const getMealsByUserAndDateController = async (req: Request, res: Response, next: NextFunction) => {
    try {
-      const userId = Number(req.params.userId);
+      const { userId } = getAuthUser(req);
       const { date } = req.query;
 
       if (isNaN(userId)) return res.status(400).json({ message: "userId debe ser un número" });
@@ -99,7 +96,7 @@ export const getMealsByUserAndDateController = async (req: Request, res: Respons
 
 export const getMealsByUserController = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = Number(req.params.userId);
+     const { userId } = getAuthUser(req);
     if (isNaN(userId)) return res.status(400).json({ message: "userId debe ser un número" });
     res.json(await getMealsByUser(userId));
   } catch (error) {

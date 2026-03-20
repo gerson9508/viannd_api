@@ -4,7 +4,7 @@ import { authMiddleware } from "../../middlewares/auth.middleware";
 
 const router = Router();
 
-router.get('/weeks/:userId', authMiddleware, getUserWeeksController);
-router.get('/weekly/:userId', authMiddleware, weeklyReportController);
+router.get('/weeks/', authMiddleware, getUserWeeksController);
+router.get('/weekly/', authMiddleware, weeklyReportController);
 
 export default router;

@@ -65,7 +65,7 @@ export const createMeal = async (data: {
          data.time,
          data.mealType,
          data.outsideDiet,
-         data.completed ?? false,
+         true,
          data.dayId ?? null,
       ]
    );

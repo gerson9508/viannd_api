@@ -5,10 +5,10 @@ import { saveCode, verifyCode, canRequestCode } from "../../utils/verification-s
 import { sendVerificationCode } from "../../utils/email";
 
 export const sendEmailVerification = async (data: any) => {
-   const { email, name } = data;
+   const { email } = data;
 
-   if (!email || !name) {
-      throw Object.assign(new Error("email y name son requeridos"), { status: 400 });
+   if (!email) {
+      throw Object.assign(new Error("email es requerido"), { status: 400 });
    }
 
    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -39,6 +39,43 @@ export const verifyAndRegister = async (data: any) => {
 
    if (!email || !code || !name || !password || !age || !gender) {
       throw Object.assign(new Error("Todos los campos son requeridos"), { status: 400 });
+   }
+
+   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+   if (!emailRegex.test(email)) {
+      throw Object.assign(new Error("Formato de email inválido"), { status: 400 });
+   }
+
+   if (name.length < 2 || name.length > 50) {
+      throw Object.assign(
+         new Error("El nombre mín. 2 y máx. 50 carácteres"),
+         { status: 400 }
+      );
+   }
+
+   if (password.length < 6 || password.length > 50) {
+      throw Object.assign(
+         new Error("Contraseña mín. 6 y máx. 50 carácteres"),
+         { status: 400 }
+      );
+   }
+
+   const parsedAge = Number(age);
+
+   if (!Number.isInteger(parsedAge) || parsedAge < 18 || parsedAge > 120) {
+      throw Object.assign(
+         new Error("Edad incorrecta. mín. 18 y máx. 120 años"),
+         { status: 400 }
+      );
+   }
+
+   const validGenders = ['Hombre', 'Mujer', 'Otro'];
+
+   if (!validGenders.includes(gender)) {
+      throw Object.assign(
+         new Error("Genero incorrecto. Hombre||Mujer||Otro " + gender),
+         { status: 400 }
+      );
    }
 
    if (!verifyCode(email, code)) {
