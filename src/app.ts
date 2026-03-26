@@ -8,6 +8,7 @@ import remindersRoutes from "./modules/reminders/reminders.routes";
 import reportsRoutes from "./modules/reports/reports.routes";
 import authRoutes from "./modules/auth/auth.routes";
 import { errorMiddleware } from "./middlewares/error.middleware";
+import planRouter from './modules/plan/plan.routes';
 
 const app = express();
 
@@ -23,6 +24,8 @@ app.use("/meals", mealsRoutes);
 app.use("/reminders", remindersRoutes);
 app.use("/reports", reportsRoutes);
 app.use("/users", usersRoutes);
+app.use('/plan', planRouter);
+
 app.use(errorMiddleware);
 
 export default app;
