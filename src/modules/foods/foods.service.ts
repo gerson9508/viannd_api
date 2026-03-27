@@ -16,10 +16,10 @@ const saveOrGetAlimento = async (food: {
   carbs: number;
 }): Promise<number> => {
 
-  const existing = await pool.query(
-    `SELECT id_alimento FROM alimento WHERE nombre = $1`,
-    [food.name]
-  );
+   const existing = await pool.query(
+      `SELECT id_alimento FROM alimento WHERE usda_id = $1`,
+      [String(food.id)]
+   );
 
   if (existing.rows.length > 0) {
     return existing.rows[0].id_alimento;

@@ -2,7 +2,7 @@ import { comparePassword } from "../../utils/password";
 import { generateToken } from "../../utils/jwt";
 import { getUserByEmail, createUser } from "../users/users.service";
 import { saveCode, verifyCode, canRequestCode } from "../../utils/verification-store";
-import { sendVerificationCode } from "../../utils/email";
+//import { sendVerificationCode } from "../../utils/email";
 
 export const sendEmailVerification = async (data: any) => {
    const { email } = data;
@@ -79,7 +79,18 @@ export const verifyAndRegister = async (data: any) => {
    }
 
    if (!verifyCode(email, code)) {
-      throw Object.assign(new Error("Código inválido o expirado"), { status: 400 });
+      throw Object.assign(
+         new Error(
+            "Código inválido o expirado. " +
+            "NOTA: El envío de correos está en modo simulación, el código NO llega al correo real. " +
+            "Para completar el registro sigue estos pasos: " +
+            "1) Primero llama al endpoint POST /auth/send-code con tu correo (esto activa la simulación y guarda el código en memoria). " +
+            "2) Ingresa el código de simulación: '123456'. " +
+            "3) Completa el registro con todos tus datos en POST /auth/register. " +
+            "IMPORTANTE: Si no llamas primero a /send-code, el código '123456' no funcionará aunque sea correcto."
+         ),
+         { status: 400 }
+      );
    }
 
    const newUser = await createUser({ email, password, name, age, gender });

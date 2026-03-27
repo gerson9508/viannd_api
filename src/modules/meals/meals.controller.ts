@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { createMeal, getMealsByUser, getMealsByDay, deleteMeal, getMealsByUserAndDate } from "./meals.service";
 import { getAuthUser } from "../../middlewares/auth.middleware";
+
 export const createMealController = async (req: Request, res: Response, next: NextFunction) => {
    try {
       const {
@@ -78,7 +79,6 @@ export const createMealController = async (req: Request, res: Response, next: Ne
       next(error);
    }
 };
-
 
 export const getMealsByUserAndDateController = async (req: Request, res: Response, next: NextFunction) => {
    try {
